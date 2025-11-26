@@ -1,5 +1,5 @@
 <?php
-class Person
+class Person    
 {
     public $name = "Undefined", $age = 18;
 

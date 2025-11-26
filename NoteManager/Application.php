@@ -1,31 +1,54 @@
 <?php
 require_once 'NoteManager.php';
-
+require_once 'NoteValidator.php';
 class Application
 {
 private NoteManager $noteManager;
+private NoteValidator $validator;
+
 
 public function __construct()
 {
-$this->noteManager = new NoteManager();
+$this->validator = new NoteValidator();
+$this->noteManager = new NoteManager($this->validator);
 }
 
 public function run(): void
 {
 try {
-$numberOfNotes = $this->noteManager->askForNumberOfNotes();
+$numberOfNotes = $this->askForNumberOfNotes();
+$validationErrors = $this->validator->validateNumberOfNotes($numberOfNotes);
+if (!empty($validationErrors)) {
+    echo "Error: " . implode(", ", $validationErrors) . "\n";
+ return;
+ }
 
-if ($numberOfNotes <= 0) {
-    echo "Number of notes must be positive.\n" ;
-    return;
-    }
 
-    $this->noteManager->inputNotes($numberOfNotes);
-    $this->noteManager->displayNotes();
+$errors = $this->noteManager->inputNotes($numberOfNotes);
 
-    } catch (Exception $e) {
+if (!empty($errors)) 
+    {
+    echo "\nSome notes were skipped due to validation errors:\n";
+foreach ($errors as $error)
+{
+    echo " - $error\n";
+}
+echo "\n";
+}
+
+$this->noteManager->displayNotes();
+} catch (Exception $e) {
     echo "An error occurred: " . $e->getMessage() . "\n";
-    }
-    }
-    }
-    ?>
+}
+}
+private function askForNumberOfNotes(): int
+{
+echo "How many notes to save? ";
+$input = trim(fgets(STDIN));
+{
+    return (int)$input;
+}
+}
+}
+
+?>
