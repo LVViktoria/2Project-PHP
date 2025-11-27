@@ -6,7 +6,8 @@ class NoteManager
     private NoteValidator $validator; //Добавлено свойство валидатора
     private int $maxNotes = 100;
 
-    public function __construct(NoteValidator $validator)//Добавлен параметр $validator с значением по умолчанию
+    public function __construct(NoteValidator $validator=null
+                            )//Добавлен параметр $validator с значением по умолчанию
     {
         $this->validator = $validator ?? new NoteValidator();
     }
